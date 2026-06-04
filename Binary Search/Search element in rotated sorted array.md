@@ -1,0 +1,1 @@
+- Weak inequalities for sorted check, target in range check, lo/hi update is exclusive

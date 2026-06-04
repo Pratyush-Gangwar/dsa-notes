@@ -1,0 +1,1 @@
+It's usually an O(N) check. No need to optimize this. Just apply greedy.

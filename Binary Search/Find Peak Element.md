@@ -1,0 +1,2 @@
+- Why not `nums[mi] > left`?
+- Why not if-else with implict case? Why else if with explicit cases?

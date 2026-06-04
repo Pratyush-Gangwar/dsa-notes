@@ -1,0 +1,1 @@
+It's the same code as BFS for a general graph. Except that you don't need a visited array because a tree does not have cycles. Neighbor exploration is simple for binary trees.

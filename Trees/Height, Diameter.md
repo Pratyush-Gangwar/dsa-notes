@@ -1,0 +1,1 @@
+It's usually easier to calculate these quantities in terms of number of nodes rather than edges. The base cases and recurrences become simpler. You can always convert the node length to edge length by subtracting 1. 

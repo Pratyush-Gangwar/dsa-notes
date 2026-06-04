@@ -1,0 +1,7 @@
+- Useful for problems without defined predicates. 
+- Inclusive `hi`
+- While-loop condition is `lo <= hi`
+- Three cases always
+	- Checking `mi` element. Return to break the loop
+	- Two update cases. 
+- `return -1` OR `return false` at the end of the while loop
