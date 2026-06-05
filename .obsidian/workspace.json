@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2026 Logs/6. June/2 June.md",
+                "file": "Graphs/Shortest Path/Cheapest Flight in K Stops.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2 June"
+              "title": "Cheapest Flight in K Stops"
             }
           }
         ]
@@ -171,9 +171,11 @@
   },
   "active": "184a5bac8563f616",
   "lastOpenFiles": [
+    "Graphs/Shortest Path/example.pdn",
+    "Graphs/Shortest Path/example.pdn.0.pdnSave",
     "2026 Logs/6. June/3 June.md",
-    "2026 Logs/6. June/4 June.md",
     "2026 Logs/6. June/2 June.md",
+    "2026 Logs/6. June/4 June.md",
     "Graphs/Shortest Path/Cheapest Flight in K Stops.md",
     "Graphs/Shortest Path/Bellman Ford.md",
     "Graphs/Shortest Path",
@@ -202,11 +204,9 @@
     "Stacks/Largest Rectangle in Histogram vs Sum of Subarray Minimums.md",
     "Stacks/Sliding Window Maximum.md",
     "Stacks/Trapping Rainwater.md",
-    "2026 Logs/5. May/10 May.md",
     "2026 Logs/6. June",
     "2026 Logs/New folder",
     "2026 Logs/5. May",
-    "Sliding Window/Patterns",
     "BST/Pasted image 20260527075501.png",
     "Arrays/Pasted image 20260524183749.png",
     "Graphs/Longest Path/Pasted image 20250309214613.png"
