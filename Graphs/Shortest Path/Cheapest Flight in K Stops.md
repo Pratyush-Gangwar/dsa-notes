@@ -112,7 +112,7 @@ The question wants us to find the cheapest flight in K stops. This is naturally 
 We need to keep track of the current level so that we can stop after K stops.
 
 #### Why stop when level == K and not when K + 1?
-TODO
+`dst` resides at level `K+1`. But if we were to stop after processing level `K + 1`, we might end up having `K + 1` stops instead of `K`. 
 
 #### Why do we push each node multiple times in the queue?
 If the distance to a node improves, we need to recalculate the distance to all its neighbors. So, we must push it multiple times.
@@ -128,12 +128,24 @@ This becomes a correctness issue when relaxing neighbors. If you use `dist[node]
 Storing `d` in the queue preserves each path's own cost independently of `dist`. When you dequeue `{node, d}`, you propagate **this path's cost** forward, not the global minimum. The path that can actually reach `dst` survives even if it wasn't cheap enough to hold `dist[node]`
 
 #### Example
+![[Pasted image 20260606192010.png]]
 
+At level 1, node 2 has been reached via two different paths:
+- 0 -> 1 -> 2: cost 2, but used 2 edges (1 stop exhausted)
+- 0 -> 2: cost 5, used 1 edge (0 stops used, 1 remaining)
+
+`dist[2] = 2`, so it only remembers the cheaper path. The costlier path that arrived via 0->2 directly lost the overwrite battle.
+
+When we dequeue {2, 5} and try to relax dst:
+- If we use `dist[2]=2`: we compute 2+1=3 for dst. But this cost belongs to the 2-edge path which is out of budget. We're propagating a dead path's cost.
+- If we use d=5: we compute 5+1=6 for dst. This is correct — the 0->2 path used only 1 edge and legitimately has budget for one more.
+
+The queue entry {2, 5} is the only surviving record that node 2 was reached cheaply on stops. `dist[2]` forgot about it the moment the cheaper 2-cost path came along. Without d in the queue, the only path that can actually reach dst within budget is silently lost.
 
 #### Why do we not have `if (d != dist[node]) continue`
 `d != dist[node]` means this path is costlier than the best known — but as established, costlier often means fewer stops remaining. Skipping it throws away the path that has budget left to reach `dst`, which is the entire reason you stored `d` in the queue in the first place.
 
 ### Complexities
-TODO
+Because unlike standard BFS, a node **can be enqueued multiple times** — once per level it gets relaxed. In the worst case a node gets enqueued at each level (`K` times), so the queue can hold `O(K · V)` entries and you process `O(K · E)` edges total.
 
-Avg/Worst same as BF. 
+In practice BFS is faster than Bellman-Ford by a constant factor since it only processes edges of nodes that were actually reached and relaxed, while BF blindly scans all E edges every pass. But the asymptotic bound is the same.
