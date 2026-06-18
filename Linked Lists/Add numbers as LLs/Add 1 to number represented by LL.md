@@ -1,0 +1,2 @@
+## Approach
+Since the node representing the unit's digit is at the end, we need at least one pass to go to the end. But, then we need to traverse the LL in reverse to propagate the carry bit. So, during our forward pass, we reverse the LL. Then, during our backward pass, we reverse it again. 

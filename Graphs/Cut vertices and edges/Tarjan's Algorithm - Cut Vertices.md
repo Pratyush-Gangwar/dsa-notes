@@ -5,7 +5,13 @@ So, let us consider one of its neighbors `v`.  We can decompose the subgraph con
 
 All tree edges stay in the DFS tree so they cannot connect `v`'s DFS tree to the rest of the graph. Back edges connect a node in the DFS tree to its ancestor. **If there exists at least one back edge from inside the subtree jumping strictly above `u`**, then `v`'s DFS tree is connected to the rest of the graph. 
 
-## Cut Vertices
+### When is `src` a cut vertex?
+#### Can back edges help us?
+Back edges connect nodes in an ancestor-descendant relationship. In either direction — to an ancestor or to a descendant — they are useless for cutness. Because if `src` is removed, the back edge disappears with it.
+
+#### Can tree edges help us?
+So we only care about tree edges not because they have special properties, but by elimination: they're the only ones that remain meaningful. 
+
 Take any tree-child `v` of `u`. From what we established: removing `u` disconnects `v`'s subtree iff there is no back edge from inside `v`'s subtree reaching strictly above `u`.
 
 And `low[v]` is exactly the minimum `disc` reachable from `v`'s subtree. So:
@@ -49,43 +55,39 @@ void helper(int src, int parent, vector<int>& disc, vector<int>& low, vector<boo
 }
 ```
 
-### disc, count
-These are for tracking discovery time of nodes
-### visited
-Part of standard DFS. Used to distinguish tree and back edges here.
-### low
+### Variables
+`disc, count`: These are for tracking discovery time of nodes
+`visited`: Part of standard DFS. Used to distinguish tree and back edges here.
 `low[src]` is used by `src`'s DFS parent to determine if the parent is a cut vertex. 
 
+### Computing `low[src]`
 It starts off as `disc[src]`.
 
 If we encounter a tree edge (`visited[neighbor] == false`), we update `low[src]` with `low[neighbor]`. But only after calling `helper(neighbor, ...)` to ensure that `low[src]` is populated. 
 
-If we encounter a back edge (`visited[neighbor] == true`), we update `low[src]` with `disc[neighbor]`.  
-
-**Why don't we update `low[src]` with `low[neighbor]` if `(src, neighbor)` is a back edge?** Remember, we are only allowed to use at most one back edge to update `low[src]`. Since `(src, neighbor)` is already a back edge, `low[neighbor]` may introduce one more back edge!
-
 **Why don't we update `low[src]` with `disc[neighbor]` if `(src, neighbor)` is a tree edge?** Since `neighbor` is unvisited, `disc[neighbor] > disc[src]` so `low[src]` which is initialized as `disc[src]` won't improve. Instead, `low[neighbor]` captures back edges leaving the subtree rooted at `neighbor` giving a chance for `low[src]` to improve. 
 
-### When is `src` a cut vertex?
-For any tree edge `(src, neighbor)`, if `low[neighbor] >= disc[src]`, then `src` is a cut vertex. 
+If we encounter a back edge (`visited[neighbor] == true`), we update `low[src]` with `disc[neighbor]`.  
 
-**Why do we not care about back edges (src, neighbor)?** Because `src` itself will be removed if it is a cut vertex!
-
-back edges cannot tell us about cutness. so thats why we dont care about them and only care about tree edges. not because tree edges have special properties but because theyre the only ones left by elimination.
+**Why don't we update `low[src]` with `low[neighbor]` if `(src, neighbor)` is a back edge?**
+- **If `neighbor` is an ancestor of `src`**: `(src, neighbor)` is already a back edge leaving the subtree rooted at `src`. Propagating `low[neighbor]` may introduce another back edge, violating the at-most-one constraint.
+- **If `neighbor` is a descendant of `src`**: we already capture this through some tree edge child of `src` under whose subtree `neighbor` falls, so propagating it again is redundant.
 
 ### Issue with the root node
-For *any* tree edge `(root, neighbor)`, `low[neighbor] >= disc[root]` since there can't be a back edge to some node above `root`. So, the cut condition is trivially true. 
+For the root node, `low[neighbor] >= disc[root]` is trivially true for any tree edge since no back edge can go above the root. So the standard cut condition always holds — it's uninformative.
 
-BUT in case the root node only has one tree edge, the root node is not a cut vertex! It is only a cut vertex if it has more than one tree edge. 
+Instead, consider three cases:
+- **Root has one child**: 
+	- Removing root leaves everything still connected. Not a cut vertex. 
+	- Trivially has one tree edge.
+	
+- **Root has multiple children, but one reaches all others**: 
+	- Not a cut vertex. 
+	- The first child visited will visit all remaining children before control returns to root, so root never gets to make another tree edge. Still one tree edge. 
+	
+- **Root has at least two isolated subtrees**: 
+	- Removing root increases the number of components. Root is a cut vertex.
+	- Control must return to root between them and root makes a new tree edge for each.
 
-Note, that I'm using the word tree edge instead of children. The root can have multiple children but only one tree edge (because the neighbor constituting the tree edge visits the rest of its children). 
+So for root, the condition simplifies to: **number of tree edges > 1**.
 
-One child vs Many child but all connected
-Disconnected implies greater than one
-
-### Parents do not constitute a back-edge
-For any node `v`, the edge b/w `v` and its `parent` (the node which call DFS on `v`) is not a back edge. It was already classified as a tree edge by `parent`. 
-
-## Visited already may be back edge or just a neighbor traversed by amother neighboe
-
-### Tree edge does not mean it is isolated from the rest of the neighbors

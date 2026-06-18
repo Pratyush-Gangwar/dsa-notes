@@ -42,5 +42,5 @@ So, we can't use extra space but still need to store information per element. Th
 
 Here, we store information about number `x` at index `x - 1`, that is, `arr[x - 1]`. We do non-destructively so that the value already present at index `x - 1` is not overwritten (multiplication by -1 is reversible).
 
-## Approach 2
+## Approach 2 (See striver)
 Find `missing + repeated` and `missing - repeated`.

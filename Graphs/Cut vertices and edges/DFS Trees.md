@@ -1,7 +1,7 @@
 ## Tree edges and back edges
 When DFS runs, every edge in the graph gets classified. Take any edge `(u, v)`:
 - If `v` is **unvisited** when we traverse it → it's a **tree edge** (we discovered `v` through `u`)
-- If `v` is **already visited** → it's a **back edge** (we've seen `v` before)
+- If `v` is **already visited** → it's a **back edge**
 
 ## Tree edges form a tree 
 A tree is just a (connected) graph with no cycles. 
@@ -23,8 +23,19 @@ It depends entirely on the order you iterate over neighbors. Different adjacency
 
 **It is not possible for some node outside of `v`'s subtree to claim `u`:** DFS is recursive, so no node outside `v`'s subtree can be visited until `v`'s call returns. So whoever discovers `u` must be inside `v`'s subtree, making `v` an ancestor of `u`.
 
-## Every back edge connects a node to one of its ancestors in the DFS tree
+
+### Back Edges
+If you encounter an already-visited node, it is a back edge — it always connects two nodes in an ancestor-descendant relationship.
+
+### Current node is an ancestor
+**Example**: `u` has neighbors `v` and `w`, with edge `w — u` also existing. `u` visits `v` first, `v` visits `w`. Now when `u` processes `w`, `u` is actually the **ancestor** and `w` is the descendant — yet it's still a back edge.
+
+### Current node is a descendant
 Say we have a back-edge `(u, v)`. Since we are currently visiting `u` and `v` is already visited (definition of back-edge), `v` must have been visited before `u`. But when we visited `v`, `u` was an unvisited neighbor of `v`, so `u` is in the subtree of `v` in the DFS tree — meaning `v` is an ancestor of `u`.
+
+### Parents do not constitute a back-edge
+For any node `v`, the edge b/w `v` and its `parent` (the node which call DFS on `v`) is not a back edge. It was already classified as a tree edge by `parent`. 
+
 
 ## The Full Graph
 The DFS tree plus the back edges **is** the entire graph. There are no other edges.

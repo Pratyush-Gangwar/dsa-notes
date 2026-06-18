@@ -41,4 +41,6 @@ void helper(int src, int parent, vector<int>& disc, vector<int>& low, vector<boo
 }
 ```
 
-For cut edges, we don't really need a separate case for the root node. In case it has only one tree edge, that edge is a cut edge. In case
+## Does root need special treatment?
+`low[neighbor] > disc[root]` is not trivially true — `neighbor`'s subtree can have a back edge to root itself. So, `root` does not need special treatment unlike for cut vertices where the condition was trivially true. 
+
