@@ -1,32 +1,32 @@
-## Introduction
-It's the same code as BFS for a general graph. Except that you don't need a visited array because a tree does not have cycles. Neighbor exploration is simple for binary trees.
-
 ## Code
 ```cpp
 class Solution {
 public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
         if (!root) return {};
 
         vector<vector<int>> ans;
         queue<TreeNode*> q;
         q.push(root);
+        bool reverse = false;
 
         while (!q.empty()) {
             int size = q.size();
-            vector<int> temp(size); // Pre-allocate for performance
+            vector<int> temp(size);
             
             for (int i = 0; i < size; ++i) {
                 TreeNode* node = q.front();
                 q.pop();
 
-                // Always fill from left to right
-                temp[i] = node->val;
+                // If reverse is true, fill from right to left; otherwise left to right
+                int index = reverse ? (size - 1 - i) : i;
+                temp[index] = node->val;
 
                 if (node->left) q.push(node->left);
                 if (node->right) q.push(node->right);
             }
 
+            reverse = !reverse;
             ans.push_back(temp);
         }
 
