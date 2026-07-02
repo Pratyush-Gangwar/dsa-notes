@@ -6,6 +6,8 @@ After visiting a node, you need its inorder successor. The recursive stack exist
 The key observation: `curr`'s inorder predecessor is the **rightmost node of `curr`'s left subtree**. That node's right pointer is always `null` by definition. We borrow it to store a thread back to `curr`, so when traversal reaches the predecessor, instead of needing to pop a stack, it follows the thread and lands directly at its successor.
 
 ## The algorithm
+![[Pasted image 20260624085259.png]]
+
 For each `curr`:
 - **No left subtree*: Just print `curr` and move to the right subtree. 
 - **Left subtree exists** — find the rightmost node of it (the inorder predecessor). Two cases:
@@ -22,3 +24,70 @@ When `curr->left == NULL`, the inorder predecessor of `curr` is the lowest ances
 
 The only exception is if `curr` is the inorder-last node — it's nobody's predecessor, so its right is null, and the traversal terminates there.
 
+## Code
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    inline TreeNode* getPre(TreeNode* root) {
+        TreeNode* curr = root->left;
+
+        while (curr->right && curr->right != root) {
+            curr = curr->right;
+        }
+
+        return curr;
+    }
+
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> ans;
+        TreeNode* curr = root;
+
+        while (curr) {
+            if (!curr->left) {
+                ans.push_back( curr->val );
+                curr = curr->right;
+            }
+
+            else {
+                TreeNode* pre = getPre(curr);
+
+                if (!pre->right) {
+                    pre->right = curr;
+                    curr = curr->left;
+                }
+
+                else {
+                    ans.push_back( curr->val );
+
+                    pre->right = nullptr;
+                    curr = curr->right;
+                }
+
+            }
+        }
+
+        return ans;
+    }
+};
+```
+
+**`curr->right != root`**
+When `pre->right` is **not set** (first visit to `curr`): `curr->right` is null eventually. The while loop terminates naturally via `!curr->right`.
+
+When `pre->right` **is set** (second visit to `curr`): Following right pointers from the inorder predecessor would loop back to `curr` itself. The guard `curr->right != root` catches this and stops — confirming the thread exists.
+
+**Why `!curr->left` first**
+`getPre` starts at `curr->left` unconditionally — if `curr->left` is null, it immediately dereferences null and crashes. So the left-null check is a prerequisite guard.
+
+Semantically it also makes sense: if there's no left subtree, `curr` is already the leftmost unvisited node in the current context, so visit and move right.
